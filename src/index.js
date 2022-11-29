@@ -4,7 +4,7 @@ import { fetchCountries } from './fetchCountries';
 
 const debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
-// let languages = Object.values(languages).join(',');
+
 const refs = {
   searchCountry: document.querySelector('#search-box'),
   list: document.querySelector('.country-list'),
@@ -22,17 +22,18 @@ function onGetCountry(e) {
     return (refs.list.innerHTML = ''), (refs.div.innerHTML = '');
   }
   fetchCountries(countryName)
-    .then(countries => {
+    .then(data => {
       refs.div.innerHTML = '';
-      if (countries.length > 10) {
+      refs.list.innerHTML = '';
+      if (data.length > 10) {
         Notify.info(
           'Too many matches found. Please enter a more specific name'
         );
-      } else if (countries.length === 1) {
-        getListCountriesMarkup(countries);
-        getCountryInfoMarkup(countries);
+      } else if (data.length === 1) {
+        getCountriesListMarkup(data);
+        getCountryInfoMarkup(data);
       } else {
-        getListCountriesMarkup(countries);
+        getCountriesListMarkup(data);
       }
     })
     .catch(error => {
@@ -46,8 +47,7 @@ function getCountryTemplate(countries) {
         <p class = "country-name">${countries.name.official}</p>
       </li>`;
 }
-function getListCountriesMarkup(countries) {
-  refs.list.innerHTML = '';
+function getCountriesListMarkup(countries) {
   const list = countries.map(getCountryTemplate).join('');
   refs.list.insertAdjacentHTML('beforeend', list);
 }
