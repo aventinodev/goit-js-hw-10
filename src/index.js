@@ -26,9 +26,7 @@ function onGetCountry(e) {
       refs.div.innerHTML = '';
       refs.list.innerHTML = '';
       if (data.length > 10) {
-        Notify.info(
-          'Too many matches found. Please enter a more specific name'
-        );
+        onWorn();
       } else if (data.length === 1) {
         getCountriesListMarkup(data);
         getCountryInfoMarkup(data);
@@ -37,7 +35,7 @@ function onGetCountry(e) {
       }
     })
     .catch(error => {
-      Notify.failure('Oops, there is no country with that name');
+      onError();
     });
 }
 
@@ -63,4 +61,10 @@ function getCountryInfoTemplate(countries) {
 function getCountryInfoMarkup(countries) {
   const info = countries.map(getCountryInfoTemplate).join('');
   refs.div.insertAdjacentHTML('beforeend', info);
+}
+function onWorn() {
+  Notify.info('Too many matches found. Please enter a more specific name');
+}
+function onError() {
+  Notify.failure('Oops, there is no country with that name');
 }
