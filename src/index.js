@@ -11,20 +11,17 @@ const refs = {
   div: document.querySelector('.country-info'),
 };
 
-refs.searchCountry.addEventListener(
-  'input',
-  debounce(onGetCountry, DEBOUNCE_DELAY)
-);
+refs.searchCountry.addEventListener('input', debounce(onGetCountry, DEBOUNCE_DELAY));
 
 function onGetCountry(e) {
+  updatePage();
   let countryName = e.target.value.trim();
-  if (countryName === '') {
-    return (refs.list.innerHTML = ''), (refs.div.innerHTML = '');
+
+  if (!countryName) {
+    return;
   }
   fetchCountries(countryName)
     .then(data => {
-      refs.div.innerHTML = '';
-      refs.list.innerHTML = '';
       if (data.length > 10) {
         onWorn();
       } else if (data.length === 1) {
@@ -38,6 +35,10 @@ function onGetCountry(e) {
       onError();
     });
 }
+function updatePage(markupList = '', markupDiv = '') {
+  refs.list.innerHTML = markupList;
+  refs.div.innerHTML = markupDiv;
+}
 
 function getCountryTemplate(countries) {
   return `<li class="country-item">
@@ -46,21 +47,21 @@ function getCountryTemplate(countries) {
       </li>`;
 }
 function getCountriesListMarkup(countries) {
-  const list = countries.map(getCountryTemplate).join('');
-  refs.list.insertAdjacentHTML('beforeend', list);
+  const countriesList = countries.map(getCountryTemplate).join('');
+  refs.list.insertAdjacentHTML('beforeend', countriesList);
+  // updatePage(countriesList, '');
 }
 function getCountryInfoTemplate(countries) {
   return `<p class="country-capital"><b>Capital:</b> ${countries.capital}</p>
-      <p class="country-population"><b>Population:</b> ${
-        countries.population
-      }</p>
-      <p class="country-languages"><b>Languages:</b> ${Object.values(
-        countries.languages
-      ).join(', ')}</p>`;
+      <p class="country-population"><b>Population:</b> ${countries.population}</p>
+      <p class="country-languages"><b>Languages:</b> ${Object.values(countries.languages).join(
+        ', '
+      )}</p>`;
 }
 function getCountryInfoMarkup(countries) {
-  const info = countries.map(getCountryInfoTemplate).join('');
-  refs.div.insertAdjacentHTML('beforeend', info);
+  const countryInfo = countries.map(getCountryInfoTemplate).join('');
+  refs.div.insertAdjacentHTML('beforeend', countryInfo);
+  // updatePage('', countryInfo);
 }
 function onWorn() {
   Notify.info('Too many matches found. Please enter a more specific name');
