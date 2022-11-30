@@ -25,7 +25,6 @@ function onGetCountry(e) {
       if (data.length > 10) {
         onWorn();
       } else if (data.length === 1) {
-        getCountriesListMarkup(data);
         getCountryInfoMarkup(data);
       } else {
         getCountriesListMarkup(data);
@@ -48,11 +47,17 @@ function getCountryTemplate(countries) {
 }
 function getCountriesListMarkup(countries) {
   const countriesList = countries.map(getCountryTemplate).join('');
-  refs.list.insertAdjacentHTML('beforeend', countriesList);
-  // updatePage(countriesList, '');
+
+  updatePage(countriesList, '');
 }
 function getCountryInfoTemplate(countries) {
-  return `<p class="country-capital"><b>Capital:</b> ${countries.capital}</p>
+  return `<div class="country-wrap">
+        <img src="${countries.flags.svg}" alt="Flag of ${
+    countries.name.official
+  }" width="40" height ="40"/>
+        <p class = "country-name">${countries.name.official}</p>
+      </div>
+  <p class="country-capital"><b>Capital:</b> ${countries.capital}</p>
       <p class="country-population"><b>Population:</b> ${countries.population}</p>
       <p class="country-languages"><b>Languages:</b> ${Object.values(countries.languages).join(
         ', '
@@ -60,8 +65,8 @@ function getCountryInfoTemplate(countries) {
 }
 function getCountryInfoMarkup(countries) {
   const countryInfo = countries.map(getCountryInfoTemplate).join('');
-  refs.div.insertAdjacentHTML('beforeend', countryInfo);
-  // updatePage('', countryInfo);
+
+  updatePage('', countryInfo);
 }
 function onWorn() {
   Notify.info('Too many matches found. Please enter a more specific name');
